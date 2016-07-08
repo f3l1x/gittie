@@ -235,7 +235,7 @@ integration_install() {
 		exit 1
 	fi
 
-	cp ./${SCRIPT} ${BIN}
+	cp ${SCRIPT} ${BIN}
 	chmod +x ${BIN}
 	_color_green "All systems ready, my lord!"
 }
@@ -247,7 +247,7 @@ integration_purge() {
 	fi
 
 	if [ -e "$BIN" ]; then
-		rm /usr/local/bin/gittie
+		rm ${BIN}
 		_color_green "Everything is removed, my lord!"
 	else
 		_color_red "Gittie is not installed, my leader!"
