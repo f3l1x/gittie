@@ -176,7 +176,7 @@ git_rebase() {
 		exit 1
 	fi
 
-	local branch=${1:-"origin/${GITTIE_GIT_CURRENT_BRANCH_SHORT}"}
+	local branch=${1:-origin/${GITTIE_GIT_CURRENT_BRANCH_SHORT}}
 
 	_ask_yn_question "Do you really want to rebase onto \e[41m\e[39m ${branch} \e[0m\e[0m?"
 	local yn=$?
