@@ -10,6 +10,12 @@ Git for dummies, a.k.a gittie!
 curl -sL https://raw.githubusercontent.com/f3l1x/gittie/master/installer.sh | sudo bash --
 ```
 
+## Uninstall
+
+```sh
+sudo gittie purge
+```
+
 ## Usage
 
 ```sh
