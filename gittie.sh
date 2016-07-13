@@ -3,7 +3,7 @@
 # CONFIGURATION ======================================================
 # ====================================================================
 
-VERSION=0.1
+VERSION=0.1.1
 GITTIE_GIT_CURRENT_BRANCH=$(git symbolic-ref -q HEAD)
 GITTIE_GIT_CURRENT_BRANCH_SHORT=$(git symbolic-ref --short -q HEAD)
 
@@ -197,7 +197,7 @@ git_reset() {
 	_ask_yn_question "Do you really want to reset \e[41m\e[39m ${branch} \e[0m\e[0m \e[42m\e[39m ${commits} commit(s) \e[0m\e[0m backward?"
 	local yn=$?
 	if [ $yn -eq 1 ]; then
-		git reset HEAD^{$commits}
+		git reset HEAD^${commits}
 	fi
 }
 
@@ -210,7 +210,7 @@ git_reset_hard() {
 	_ask_yn_question "Do you really want to \e[44m\e[39m hard reset \e[0m\e[0m \e[41m\e[39m ${branch} \e[0m\e[0m \e[42m\e[39m ${commits} commit(s) \e[0m\e[0m backward?"
 	local yn=$?
 	if [ $yn -eq 1 ]; then
-		git reset --hard HEAD^{$commits}
+		git reset --hard HEAD^${commits}
 	fi
 }
 
@@ -223,7 +223,7 @@ git_reset_soft() {
 	_ask_yn_question "Do you really want to \e[44m\e[39m soft reset \e[0m\e[0m \e[41m\e[39m ${branch} \e[0m\e[0m \e[42m\e[39m ${commits} commit(s) \e[0m\e[0m backward?"
 	local yn=$?
 	if [ $yn -eq 1 ]; then
-		git reset --soft HEAD^{$commits}
+		git reset --soft HEAD^${commits}
 	fi
 }
 
