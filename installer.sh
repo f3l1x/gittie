@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
-FILE=/var/tmp/gittie.sh
+# Gittie
+GITTIE_TMP_FILE=/var/tmp/gittie.sh
+curl -sL https://raw.githubusercontent.com/f3l1x/gittie/master/gittie.sh >> ${GITTIE_TMP_FILE}
+sudo bash ${GITTIE_TMP_FILE} install
+rm ${GITTIE_TMP_FILE}
 
-curl -sL https://raw.githubusercontent.com/f3l1x/gittie/master/gittie.sh >> ${FILE}
-sudo bash ${FILE} install
-rm ${FILE}
+# Gittie completion
+COMPLETION_FILE=/etc/bash_completion.d/gittie
+curl -sL https://raw.githubusercontent.com/f3l1x/gittie/master/completion >> ${COMPLETION_FILE}

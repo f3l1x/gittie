@@ -1,0 +1,53 @@
+#!/bin/sh
+
+# Gittie completion
+_gittie()
+{
+    local cur prev commands
+    COMPREPLY=()
+    GIT_REPO=$(git rev-parse --is-inside-work-tree 2>/dev/null)
+
+    first="${COMP_WORDS[1]}"
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    commands="c a p s ch m ms fp rb rba rbc r rh rs"
+
+    if [[ ${first} == "rb" && ${GIT_REPO} ]]; then
+        COMPREPLY=( $(compgen -W "$(git for-each-ref --format="%(refname:short)")" -- ${cur}) )
+        return 0
+    fi
+
+    if [[ ${first} == "fp" && ${GIT_REPO} ]]; then
+        COMPREPLY=( $(compgen -W "$(git for-each-ref --format="%(refname:short)")" -- ${cur}) )
+        return 0
+    fi
+
+    if [[ ${first} == "m" && ${GIT_REPO} ]]; then
+        COMPREPLY=( $(compgen -W "$(git for-each-ref --format="%(refname:short)")" -- ${cur}) )
+        return 0
+    fi
+
+    if [[ ${first} == "ms" && ${GIT_REPO} ]]; then
+        COMPREPLY=( $(compgen -W "$(git for-each-ref --format="%(refname:short)")" -- ${cur}) )
+        return 0
+    fi
+
+    if [[ ${first} == "p" && ${GIT_REPO} ]]; then
+        COMPREPLY=( $(compgen -W "$(git for-each-ref --format="%(refname:short)")" -- ${cur}) )
+        return 0
+    fi
+
+    if [[ ${first} == "ch" && ${GIT_REPO} ]]; then
+        COMPREPLY=( $(compgen -W "$(git for-each-ref --format="%(refname:short)")" -- ${cur}) )
+        return 0
+    fi
+
+    if [[ -z "${cur}" && ${COMP_CWORD} == 1 ]]; then
+        COMPREPLY=( $(compgen -W "${commands}" -- ${cur}) )
+        return 0
+    fi
+
+}
+
+complete -F _gittie gittie

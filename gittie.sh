@@ -3,10 +3,14 @@
 # CONFIGURATION ======================================================
 # ====================================================================
 
-VERSION=0.1.1
-GITTIE_GIT_CURRENT_BRANCH=$(git symbolic-ref -q HEAD)
-GITTIE_GIT_CURRENT_BRANCH_SHORT=$(git symbolic-ref --short -q HEAD)
+VERSION=0.2
 
+GITTIE_IS_GIT_REPO=$(git rev-parse --is-inside-work-tree 2>/dev/null)
+
+if [[ $GITTIE_IS_GIT_REPO == "true" ]]; then
+	GITTIE_GIT_CURRENT_BRANCH=$(git symbolic-ref -q HEAD)
+	GITTIE_GIT_CURRENT_BRANCH_SHORT=$(git symbolic-ref --short -q HEAD)
+fi
 # VARIABLES ==========================================================
 # ====================================================================
 
@@ -40,6 +44,8 @@ Commands:
   ms        Merge & squash current branch with <branch>
   fp        Force push current branch to [<origin/current> or <branch>].
   rb        Rebase current branch onto [<origin/current> or <branch>].
+  rba       Abort rebasing.
+  rbc       Continue rebasing.
   r         Reset mixed current branch <commits> backward.
   rh        Reset hard current branch <commits> backward.
   rs        Reset soft current branch <commits> backward.
@@ -188,6 +194,18 @@ git_rebase() {
 	fi
 }
 
+# [rba] REBASE - ABORT ===============================================
+# ====================================================================
+git_rebase_abort() {
+	git rebase --abort
+}
+
+# [rba] REBASE - CONTINUE ===============================================
+# ====================================================================
+git_rebase_continue() {
+	git rebase --continue
+}
+
 # [r] RESET ==========================================================
 # ====================================================================
 git_reset() {
@@ -235,7 +253,7 @@ integration_install() {
 		exit 1
 	fi
 
-	cp ${SCRIPT} ${BIN}
+	cp ./${SCRIPT} ${BIN}
 	chmod +x ${BIN}
 	_color_green "All systems ready, my lord!"
 }
@@ -351,6 +369,14 @@ case ${COMMAND} in
 		;;
 	rb)
 		git_rebase $*
+		exit 1
+		;;
+	rba)
+		git_rebase_abort $*
+		exit 1
+		;;
+	rbc)
+		git_rebase_continue $*
 		exit 1
 		;;
 	r)

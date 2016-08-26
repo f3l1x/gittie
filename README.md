@@ -18,12 +18,14 @@ sudo gittie purge
 
 ## Usage
 
+Use via easy-type [complementation](https://github.com/f3l1x/gittie/blob/master/complementation).
+
 ```sh
 Usage: gittie [-h]
 
 Git for dummies, a.k.a gittie!
 
-Version: 0.1
+Version: 0.2
 
 Options:
 
@@ -39,6 +41,8 @@ Commands:
   ms        Merge & squash current branch with <branch>
   fp        Force push current branch to [<origin/current> or <branch>].
   rb        Rebase current branch onto [<origin/current> or <branch>].
+  rba       Abort rebasing.
+  rbc       Continue rebasing.
   r         Reset mixed current branch <commits> backward.
   rh        Reset hard current branch <commits> backward.
   rs        Reset soft current branch <commits> backward.
