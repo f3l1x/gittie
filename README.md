@@ -18,7 +18,7 @@ sudo gittie purge
 
 ## Usage
 
-Use via easy-type [complementation](https://github.com/f3l1x/gittie/blob/master/complementation).
+Use via easy-type [completion](https://github.com/f3l1x/gittie/blob/master/completion).
 
 ```sh
 Usage: gittie [-h]
