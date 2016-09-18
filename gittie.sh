@@ -3,7 +3,7 @@
 # CONFIGURATION ======================================================
 # ====================================================================
 
-VERSION=0.2
+VERSION=0.3
 
 GITTIE_IS_GIT_REPO=$(git rev-parse --is-inside-work-tree 2>/dev/null)
 
@@ -39,6 +39,8 @@ Commands:
   a         Amend changes to last commit.
   p         Push current branch to [<origin/current> or <branch>].
   s         Squash <commits> together.
+  f         Fetch <branch>.
+  pl        Pull <branch>.
   ch        Checkout to <branch>.
   m         Merge current branch with <branch>
   ms        Merge & squash current branch with <branch>
@@ -46,9 +48,11 @@ Commands:
   rb        Rebase current branch onto [<origin/current> or <branch>].
   rba       Abort rebasing.
   rbc       Continue rebasing.
+  rbd       Preserve commit(s) date.
   r         Reset mixed current branch <commits> backward.
   rh        Reset hard current branch <commits> backward.
   rs        Reset soft current branch <commits> backward.
+  wf        Fetch updates, rebase, preserve dates and force push.
 
 Integration:
   install   Install to your OS.
@@ -182,16 +186,31 @@ git_rebase() {
 		exit 1
 	fi
 
-	local branch=${1:-origin/${GITTIE_GIT_CURRENT_BRANCH_SHORT}}
+	local branch=$(echo ${1:-${GITTIE_GIT_CURRENT_BRANCH_SHORT}} | sed -e "s/origin\///g")
+	local commits=$(git log --oneline "origin/${branch}"..${GITTIE_GIT_CURRENT_BRANCH_SHORT} | wc -l)
 
-	_ask_yn_question "Do you really want to rebase onto \e[41m\e[39m ${branch} \e[0m\e[0m?"
+	_ask_yn_question "Do you really want to rebase \e[42m\e[39m ${commits} commit(s) \e[0m\e[0m onto \e[41m\e[39m origin/${branch} \e[0m\e[0m?"
 	local yn=$?
 	if [ $yn -eq 1 ]; then
-		if [[ $branch == *"/"* ]]; then
-			git fetch ${branch/\// }
-		fi
-		git rebase -i "${branch}"
+		git rebase -i "origin/${branch}"
+		git_rebase_date "${commits}"
 	fi
+}
+
+# [f] FETCH ==========================================================
+# ====================================================================
+git_fetch() {
+	local branch=${1:-${GITTIE_GIT_CURRENT_BRANCH_SHORT}}
+	echo -ne "Fetching updates from \e[41m\e[39m ${branch} \e[0m\e[0m branch.\n"
+	git fetch origin "${branch}"
+}
+
+# [pl] PULL ==========================================================
+# ====================================================================
+git_pull() {
+	local branch=${1:-${GITTIE_GIT_CURRENT_BRANCH_SHORT}}
+	echo -ne "Pulling updates from \e[41m\e[39m ${branch} \e[0m\e[0m branch.\n"
+	git pull origin "${branch}"
 }
 
 # [rba] REBASE - ABORT ===============================================
@@ -200,10 +219,22 @@ git_rebase_abort() {
 	git rebase --abort
 }
 
-# [rba] REBASE - CONTINUE ===============================================
+# [rba] REBASE - CONTINUE ============================================
 # ====================================================================
 git_rebase_continue() {
 	git rebase --continue
+}
+
+# [rbd] REBASE - DATE ================================================
+# ====================================================================
+git_rebase_date() {
+	local commits=${1:-1}
+
+	_ask_yn_question "Do you want to preserve date for \e[42m\e[39m ${commits} commit(s) \e[0m\e[0m at \e[41m\e[39m ${GITTIE_GIT_CURRENT_BRANCH_SHORT} \e[0m\e[0m?"
+	local yn=$?
+	if [ $yn -eq 1 ]; then
+		git rebase --committer-date-is-author-date HEAD~${commits}
+	fi
 }
 
 # [r] RESET ==========================================================
@@ -243,6 +274,21 @@ git_reset_soft() {
 	if [ $yn -eq 1 ]; then
 		git reset --soft HEAD^${commits}
 	fi
+}
+
+# [wf] WORK FLOW =====================================================
+# ====================================================================
+git_work_flow() {
+	if [ -z "$1" ]; then
+		echo "Workflow denied. Please type upstream branch name."
+		exit 1;
+	fi
+
+	local branch=${1}
+
+	git_fetch "${branch}"
+	git_rebase "origin/${branch}"
+	git_force_push
 }
 
 # INTEGRATION ========================================================
@@ -351,6 +397,14 @@ case ${COMMAND} in
 		git_squash $*
 		exit 1
 		;;
+	f)
+		git_fetch $*
+		exit 1
+		;;
+	pl)
+		git_pull $*
+		exit 1
+		;;
 	ch)
 		git_checkout $*
 		exit 1
@@ -379,6 +433,10 @@ case ${COMMAND} in
 		git_rebase_continue $*
 		exit 1
 		;;
+	rbd)
+		git_rebase_date $*
+		exit 1
+		;;
 	r)
 		git_reset $*
 		exit 1
@@ -389,6 +447,10 @@ case ${COMMAND} in
 		;;
 	rs)
 		git_reset_soft $*
+		exit 1
+		;;
+	wf)
+		git_work_flow $*
 		exit 1
 		;;
 	install)
